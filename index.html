@@ -3,9 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b3d2e">
     <title>Christmas Song of the Day</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet">
+
     <style>
-        /* Basic Reset and Responsive Font Sizing */
+        :root {
+            --pine-deep: #06261c;
+            --pine: #0b3d2e;
+            --pine-card: #134a38;
+            --cranberry: #c8102e;
+            --gold: #f5c542;
+            --cream: #fdf3dc;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,65 +27,215 @@
         }
 
         body {
-            background-color: #1a202c;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+            background: radial-gradient(ellipse at 50% 0%, var(--pine) 0%, var(--pine-deep) 75%) fixed;
+            color: var(--cream);
+            font-family: 'Lato', Arial, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 56px 20px 24px;
         }
 
-        /* Main Container Styling */
+        /* Snow layer sits behind the card and never blocks clicks */
+        #snow {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .flake {
+            position: absolute;
+            top: -10px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translate(var(--drift), 110vh); }
+        }
+
+        /* Card with a candy-cane stripe border */
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 600px;
             width: 100%;
-            background-color: #2d3748;
-            padding: 30px;
-            border-radius: 12px;
+            padding: 44px 28px 30px;
+            border: 6px solid transparent;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            background:
+                linear-gradient(var(--pine-card), var(--pine-card)) padding-box,
+                repeating-linear-gradient(45deg, var(--cranberry) 0 12px, #fff 12px 24px) border-box;
+            box-shadow: 0 0 36px rgba(200, 16, 46, 0.3), 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Heading Styling */
+        /* String of fairy lights hanging over the top of the card */
+        .lights {
+            position: absolute;
+            top: -34px;
+            left: 12px;
+            right: 12px;
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            list-style: none;
+            z-index: 2;
+        }
+
+        .lights::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: -6px;
+            right: -6px;
+            height: 14px;
+            border-top: 2px solid #1c1c1c;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+
+        .lights li {
+            position: relative;
+            width: 14px;
+            height: 22px;
+            margin-top: 8px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            background: var(--c);
+            box-shadow: 0 0 12px 3px var(--c);
+            animation: twinkle 2.4s ease-in-out infinite;
+            animation-delay: var(--d);
+        }
+
+        .lights li::before {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: 3px;
+            width: 8px;
+            height: 7px;
+            background: #1c1c1c;
+            border-radius: 2px;
+        }
+
+        .lights li:nth-child(4n+1) { --c: #ff3b4e; --d: 0s; }
+        .lights li:nth-child(4n+2) { --c: #ffd23f; --d: 0.6s; }
+        .lights li:nth-child(4n+3) { --c: #3ddc84; --d: 1.2s; }
+        .lights li:nth-child(4n+4) { --c: #4aa8ff; --d: 1.8s; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
         h1 {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ec4899;
-            margin-bottom: 20px;
+            font-family: 'Mountains of Christmas', Georgia, serif;
+            font-size: clamp(2.2rem, 8vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--gold);
+            text-shadow: 0 2px 12px rgba(245, 197, 66, 0.35);
+            margin-bottom: 8px;
+        }
+
+        .countdown {
+            font-size: 0.95rem;
+            color: rgba(253, 243, 220, 0.75);
+            margin-bottom: 22px;
         }
 
         h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #e2e8f0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cream);
             margin-bottom: 20px;
         }
 
-        /* Spotify Player Styling */
+        /* Spotify Player */
+        .player-frame {
+            border: 2px solid var(--gold);
+            border-radius: 14px;
+            overflow: hidden;
+            background: #121212; /* matches Spotify's dark player, so no green shows through any gap */
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        }
+
         #spotify-player {
+            display: block; /* removes the small gap iframes leave underneath */
             width: 100%;
             height: 352px;
-            border-radius: 8px;
-            border: none;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            border: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .flake { display: none; }
+            .lights li { animation: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Container for the Song of the Day -->
+    <div id="snow" aria-hidden="true"></div>
+
     <div class="container">
-        <h1>Christmas Song of the Day</h1>
+        <ul class="lights" aria-hidden="true">
+            <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+        </ul>
+
+        <h1>🎄 Christmas Song of the Day 🎄</h1>
+        <p class="countdown" id="countdown"></p>
         <h2 id="song">Loading...</h2>
 
-        <!-- Spotify Player Embed -->
-        <iframe id="spotify-player"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy">
-        </iframe>
+        <div class="player-frame">
+            <iframe id="spotify-player"
+                    title="Spotify player for today's Christmas song"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy">
+            </iframe>
+        </div>
     </div>
+
+    <script>
+        // Snowfall
+        (function () {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var snow = document.getElementById('snow');
+            for (var i = 0; i < 40; i++) {
+                var f = document.createElement('span');
+                var size = 3 + Math.random() * 5;
+                f.className = 'flake';
+                f.style.width = f.style.height = size + 'px';
+                f.style.left = Math.random() * 100 + '%';
+                f.style.opacity = 0.4 + Math.random() * 0.5;
+                f.style.animationDuration = 8 + Math.random() * 12 + 's';
+                f.style.animationDelay = -Math.random() * 20 + 's';
+                f.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+                snow.appendChild(f);
+            }
+        })();
+
+        // Days until Christmas
+        (function () {
+            var now = new Date();
+            var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+            var year = now.getFullYear();
+            var xmas = Date.UTC(year, 11, 25);
+            var el = document.getElementById('countdown');
+
+            if (today === xmas) {
+                el.textContent = 'Merry Christmas! 🎅';
+                return;
+            }
+            if (today > xmas) xmas = Date.UTC(year + 1, 11, 25);
+
+            var days = Math.round((xmas - today) / 86400000);
+            el.textContent = days === 1 ? '1 sleep until Christmas!' : days + ' days until Christmas';
+        })();
+    </script>
 
     <!-- External JavaScript file -->
     <script src="script.js"></script>
